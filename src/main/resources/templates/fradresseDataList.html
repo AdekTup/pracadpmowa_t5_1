@@ -1,0 +1,24 @@
+hello.html<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title> FR Adresse List </title>
+</head>
+<body>
+<table>
+    <tr>
+        <th>City</th>
+        <th>Postcode</th>
+        <th>Street</th>
+        <th>Label</th>
+    </tr>
+    <tr th:each="adr: ${adresseDataList}">
+        <td th:text="${adr.getCity()}"></td>
+        <td th:text="${adr.getPostcode()}"></td>
+        <td th:text="${adr.getStreet()}"></td>
+        <td th:text="${adr.getLabel()}"></td>
+    </tr>
+
+</table>
+</body>
+</html>
