@@ -1,12 +1,11 @@
 package pl.baksza.pracadpmowa_t5_1.Controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.client.RestTemplate;
 import pl.baksza.pracadpmowa_t5_1.Model.AdresseData;
-import pl.baksza.pracadpmowa_t5_1.Model.Feature;
-import pl.baksza.pracadpmowa_t5_1.Model.FrApiAdresse;
+import pl.baksza.pracadpmowa_t5_1.Service.AderssDataService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,27 +13,16 @@ import java.util.List;
 @Controller
 public class AdresseDataController {
 
-    private List<AdresseData> getFrApiAdresse() {
-        RestTemplate restTemplate = new RestTemplate();
+    AderssDataService aderssDataService;
 
-        FrApiAdresse frApiAdresse = restTemplate.getForObject("https://api-adresse.data.gouv.fr/search/?q=8+bd+du+port&limit=15",FrApiAdresse.class);
-        List<Feature> featureList = frApiAdresse.getFeatures();
-        AdresseData adresseData = null;
-        List<AdresseData> adresseDataList = new ArrayList<>();
-
-        for(Feature f : featureList ) {
-            adresseData = new AdresseData(f.getProperties().getProperty("city"),f.getProperties().getProperty("postcode"),f.getProperties().getProperty("street"),f.getProperties().getProperty("label"));
-            adresseDataList.add(adresseData);
-
-        }
-
-        return adresseDataList;
-
+    @Autowired
+    public AdresseDataController(AderssDataService aderssDataService) {
+        this.aderssDataService = aderssDataService;
     }
 
     @GetMapping("/fradr")
     public String getfr (Model model) {
-        List<AdresseData> adresseDataList = getFrApiAdresse();
+        List<AdresseData> adresseDataList = aderssDataService.getFrApiAdresse();
         if (!adresseDataList.isEmpty()) {
             model.addAttribute("adresseDataList", adresseDataList);
             return "fradresseDataList";
@@ -44,12 +32,3 @@ public class AdresseDataController {
     }
 }
 
-//            System.out.println(f.getProperties().toString());
-//            String city = f.getProperties().getProperty("city");
-//            String postcode = f.getProperties().getProperty("postcode");
-//            String street =  f.getProperties().getProperty("street");
-//            String label = f.getProperties().getProperty("label");
-//            System.out.println("C: " + city);
-//            System.out.println("P: " + postcode);
-//            System.out.println("S: " + street);
-//            System.out.println("L: " + label);
